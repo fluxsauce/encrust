@@ -1,0 +1,12 @@
+{
+  "nova": {
+    "clientId": "REPLACE",
+    "clientSecret": "REPLACE"
+  },
+  "eslint": {
+    "file": "./coverage/eslint.json"
+  },
+  "lcov": {
+    "file": "./coverage/lcov.info"
+  }
+}
