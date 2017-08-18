@@ -60,13 +60,43 @@ if (isError(inputValidation.error)) {
   process.exit(1);
 }
 
-const event = {
-  eslintCountWarning: 0,
-  eslintCountError: 0,
-  coveragePercentageLines: 0,
-  coveragePercentageFunctions: 0,
-  coveragePercentageBranches: 0,
-};
+const eventSchema = Joi.object().keys({
+  eslintCountWarning: Joi.number()
+    .integer()
+    .min(0)
+    .default(0)
+    .required()
+    .label('ESLint warning count'),
+  eslintCountError: Joi.number()
+    .integer()
+    .min(0)
+    .default(0)
+    .required()
+    .label('ESLint error count'),
+  coveragePercentageLines: Joi.number()
+    .precision(2)
+    .min(0)
+    .max(100)
+    .default(0)
+    .required()
+    .label('Code coverage lines percentage'),
+  coveragePercentageFunctions: Joi.number()
+    .precision(2)
+    .min(0)
+    .max(100)
+    .default(0)
+    .required()
+    .label('Code coverage functions percentage'),
+  coveragePercentageBranches: Joi.number()
+    .precision(2)
+    .min(0)
+    .max(100)
+    .default(0)
+    .required()
+    .label('Code coverage branches percentage'),
+});
+
+const event = {};
 
 const eslintJson = util.readJson(nconf.get('eslint:file'));
 const counts = util.parseEslint(eslintJson);
@@ -75,10 +105,17 @@ merge(event, counts);
 parse(nconf.get('lcov:file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
+  const eventValidation = eventSchema.validate(event);
+
+  if (isError(eventValidation.error)) {
+    logger.error(eventValidation.error.message);
+    process.exit(1);
+  }
+
   // Workaround until Nova API supports JSON.
   const eventValuesStrings = {};
-  forEach(keys(event), (key) => {
-    eventValuesStrings[key] = event[key].toString();
+  forEach(keys(eventValidation.value), (key) => {
+    eventValuesStrings[key] = eventValidation.value[key].toString();
   });
 
   const options = {

@@ -36,12 +36,12 @@
     "encrust": "./bin/encrust.js"
   },
   "dependencies": {
-    "joi": "^10.6.0",
+    "joi": "10.6.x",
     "lcov-parse": "1.0.x",
     "lodash": "4.17.x",
     "nconf": "0.8.x",
     "request": "2.81.x",
-    "winston": "^2.3.1"
+    "winston": "2.3.x"
   },
   "devDependencies": {
     "ava": "0.22.x",
