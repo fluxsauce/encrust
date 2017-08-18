@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-const defaults = require('../.encrust.default.json');
-const isEmpty = require('lodash/isEmpty');
+const isError = require('lodash/isError');
 const keys = require('lodash/keys');
 const forEach = require('lodash/forEach');
 const merge = require('lodash/merge');
+const omit = require('lodash/omit');
 const split = require('lodash/split');
 const replace = require('lodash/replace');
 const parse = require('lcov-parse');
 const winston = require('winston');
+const Joi = require('joi');
 
 const logger = new (winston.Logger)({
   transports: [
@@ -27,24 +28,35 @@ const request = require('request');
 const nconf = require('nconf');
 const util = require('../lib/util');
 
+// Parse input.
 nconf
-  .env('__')
-  .argv()
+  .env({
+    separator: '__',
+    whitelist: ['nova__clientId', 'nova__clientSecret'],
+  })
   .file({ file: `${process.cwd()}/.encrust.json` })
-  .defaults(defaults);
+  .defaults(require('../.encrust.default.json'));
 
-const errors = [];
+const input = omit(nconf.get(), 'type');
 
-if (nconf.get('nova:clientId') === 'REPLACE') {
-  errors.push('Provide or edit the nova clientId');
-}
+// Validate input.
+const inputSchema = Joi.object().keys({
+  nova: Joi.object().keys({
+    clientId: Joi.string().required().invalid('REPLACE').label('splunk nova clientId'),
+    clientSecret: Joi.string().required().invalid('REPLACE').label('splunk nova clientSecret'),
+  }).required().label('splunk nova configuration'),
+  eslint: Joi.object().keys({
+    file: Joi.string().required().label('Path to ESLint JSON file'),
+  }).required().label('ESLint configuration'),
+  lcov: Joi.object().keys({
+    file: Joi.string().required().label('Path to LCOV file'),
+  }).required().label('LCOV configuration'),
+}).required().label('Input');
 
-if (nconf.get('nova:clientSecret') === 'REPLACE') {
-  errors.push('Provide or edit the nova clientSecret');
-}
+const inputValidation = inputSchema.validate(input, { abortEarly: false, stripUnknown: true });
 
-if (!isEmpty(errors)) {
-  forEach(errors, error => logger.error(error));
+if (isError(inputValidation.error)) {
+  logger.error(inputValidation.error.message);
   process.exit(1);
 }
 

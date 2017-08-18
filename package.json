@@ -36,6 +36,7 @@
     "encrust": "./bin/encrust.js"
   },
   "dependencies": {
+    "joi": "^10.6.0",
     "lcov-parse": "1.0.x",
     "lodash": "4.17.x",
     "nconf": "0.8.x",
