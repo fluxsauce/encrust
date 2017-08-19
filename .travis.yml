@@ -7,4 +7,4 @@ script:
   - npm test
   - npm run lint -s
 after_script:
-  - ./bin/encrust.js
+  - ./bin/encrust.js -l nodejs

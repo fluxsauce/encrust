@@ -16,7 +16,7 @@ const get = require('lodash/get');
 const envTravisCi = require('../lib/env/travisCi');
 const help = require('../lib/help');
 const schemaEvent = require('../schema/event');
-const schemaInput = require('../schema/input');
+const schemaConfig = require('../schema/config');
 const util = require('../lib/util');
 const usage = require('../lib/usage');
 
@@ -37,7 +37,7 @@ if (has(options, '_all.help')) {
   process.exit(0);
 }
 
-// Parse input.
+// Parse config.
 nconf
   .env({
     separator: '__',
@@ -46,16 +46,16 @@ nconf
   .file({ file: `${process.cwd()}/.encrust.json` })
   .defaults(require('../.encrust.default.json'));
 
-const input = omit(nconf.get(), 'type');
+const config = omit(nconf.get(), 'type');
 
-// Validate input.
-const inputValidation = schemaInput.validate(input, {
+// Validate configuration.
+const configValidation = schemaConfig.validate(config, {
   abortEarly: false,
   stripUnknown: true,
 });
 
-if (isError(inputValidation.error)) {
-  logger.error(inputValidation.error.message);
+if (isError(configValidation.error)) {
+  logger.error(configValidation.error.message);
   logger.info('Use --help for documentation.');
   process.exit(1);
 }
@@ -66,20 +66,20 @@ const event = {};
 merge(event, (get(options, '_all')));
 
 if (get(process, 'env.TRAVIS')) {
+  logger.debug('Detected Travis CI, setting event from environment variables');
   merge(event, envTravisCi(get(process, 'env')));
 }
 
-console.log(event);
-process.exit(0);
-
-const eslintJson = util.readJson(nconf.get('eslint:file'));
+const eslintJson = util.readJson(get(config, 'eslint:file'));
 const counts = util.parseEslint(eslintJson);
 merge(event, counts);
 
-parse(nconf.get('lcov:file'), (err, data) => {
+parse(get(config, 'lcov:file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
   const eventValidation = schemaEvent.validate(event);
+
+  logger.debug(eventValidation);
 
   if (isError(eventValidation.error)) {
     logger.error(eventValidation.error.message);
@@ -95,8 +95,8 @@ parse(nconf.get('lcov:file'), (err, data) => {
   const requestOptions = {
     uri: 'https://api.logface.io/v1/events',
     auth: {
-      user: nconf.get('nova:clientId'),
-      pass: nconf.get('nova:clientSecret'),
+      user: get(config, 'nova:clientId'),
+      pass: get(config, 'nova:clientSecret'),
     },
     json: [eventValuesStrings],
   };

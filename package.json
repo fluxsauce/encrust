@@ -1,7 +1,7 @@
 {
   "name": "encrust",
   "version": "1.0.0",
-  "description": "Send LCOV code coverage and ESLint warnings and errors to splunk project nova.",
+  "description": "Send LCOV code coverage and ESLint warnings and errors from CI builds to splunk project nova.",
   "main": "index.js",
   "scripts": {
     "test": "nyc ava",
