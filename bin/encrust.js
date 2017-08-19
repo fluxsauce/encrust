@@ -61,13 +61,14 @@ if (isError(inputValidation.error)) {
 }
 
 // Build event.
-const event = {
-  language: 'nodejs',
-};
+const event = {};
+
 merge(event, (get(options, '_all')));
 
-if (get(process, 'env.TRAVIS') === true) {
-  merge(event, envTravisCi(process.env));
+console.log(process.env.TRAVIS);
+console.log(get(process, 'env.TRAVIS'));
+if (get(process, 'env.TRAVIS')) {
+  merge(event, envTravisCi(get(process, 'env')));
 }
 
 console.log(event);
