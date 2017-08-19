@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage');
 const forEach = require('lodash/forEach');
 const isError = require('lodash/isError');
 const keys = require('lodash/keys');
@@ -9,10 +11,13 @@ const omit = require('lodash/omit');
 const parse = require('lcov-parse');
 const request = require('request');
 const winston = require('winston');
+const set = require('lodash/set');
 
+const help = require('../lib/help');
 const schemaEvent = require('../schema/event');
 const schemaInput = require('../schema/input');
 const util = require('../lib/util');
+const usage = require('../lib/usage');
 
 // Logger.
 const logger = new (winston.Logger)({
@@ -22,6 +27,14 @@ const logger = new (winston.Logger)({
     }),
   ],
 });
+
+const options = commandLineArgs(usage);
+
+// Show help.
+if (set(options, '_all.help')) {
+  help(usage);
+  process.exit(0);
+}
 
 // Parse input.
 nconf

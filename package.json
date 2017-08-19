@@ -36,6 +36,8 @@
     "encrust": "./bin/encrust.js"
   },
   "dependencies": {
+    "command-line-args": "4.0.x",
+    "command-line-usage": "4.0.x",
     "joi": "10.6.x",
     "lcov-parse": "1.0.x",
     "lodash": "4.17.x",
