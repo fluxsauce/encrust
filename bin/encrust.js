@@ -10,8 +10,10 @@ const omit = require('lodash/omit');
 const parse = require('lcov-parse');
 const request = require('request');
 const winston = require('winston');
-const set = require('lodash/set');
+const has = require('lodash/has');
+const get = require('lodash/get');
 
+const envTravisCi = require('../lib/env/travisCi');
 const help = require('../lib/help');
 const schemaEvent = require('../schema/event');
 const schemaInput = require('../schema/input');
@@ -30,7 +32,7 @@ const logger = new (winston.Logger)({
 const options = commandLineArgs(usage);
 
 // Show help.
-if (set(options, '_all.help')) {
+if (has(options, '_all.help')) {
   help(usage);
   process.exit(0);
 }
@@ -54,11 +56,22 @@ const inputValidation = schemaInput.validate(input, {
 
 if (isError(inputValidation.error)) {
   logger.error(inputValidation.error.message);
+  logger.info('Use --help for documentation.');
   process.exit(1);
 }
 
 // Build event.
-const event = {};
+const event = {
+  language: 'nodejs',
+};
+merge(event, (get(options, '_all')));
+
+if (get(process, 'env.TRAVIS') === true) {
+  merge(event, envTravisCi(process.env));
+}
+
+console.log(event);
+process.exit(0);
 
 const eslintJson = util.readJson(nconf.get('eslint:file'));
 const counts = util.parseEslint(eslintJson);
