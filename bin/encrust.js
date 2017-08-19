@@ -66,7 +66,7 @@ const event = {};
 merge(event, (get(options, '_all')));
 
 if (get(process, 'env.TRAVIS')) {
-  merge(event, envTravisCi());
+  merge(event, envTravisCi(get(process, 'env')));
 }
 
 console.log(event);
