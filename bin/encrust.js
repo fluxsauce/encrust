@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
-const commandLineUsage = require('command-line-usage');
 const forEach = require('lodash/forEach');
 const isError = require('lodash/isError');
 const keys = require('lodash/keys');
@@ -81,7 +80,7 @@ parse(nconf.get('lcov:file'), (err, data) => {
     eventValuesStrings[key] = eventValidation.value[key].toString();
   });
 
-  const options = {
+  const requestOptions = {
     uri: 'https://api.logface.io/v1/events',
     auth: {
       user: nconf.get('nova:clientId'),
@@ -90,7 +89,7 @@ parse(nconf.get('lcov:file'), (err, data) => {
     json: [eventValuesStrings],
   };
 
-  request.post(options, (error, response, body) => {
+  request.post(requestOptions, (error, response, body) => {
     if (error) {
       logger.log('error', error);
     }
