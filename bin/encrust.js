@@ -70,14 +70,17 @@ if (get(process, 'env.TRAVIS')) {
   merge(event, envTravisCi(get(process, 'env')));
 }
 
-const eslintJson = util.readJson(get(config, 'eslint:file'));
+const eslintJson = util.readJson(get(config, 'eslint.file'));
 const counts = util.parseEslint(eslintJson);
 merge(event, counts);
 
-parse(get(config, 'lcov:file'), (err, data) => {
+parse(get(config, 'lcov.file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
-  const eventValidation = schemaEvent.validate(event);
+  const eventValidation = schemaEvent.validate(event, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
 
   logger.debug(eventValidation);
 
@@ -95,8 +98,8 @@ parse(get(config, 'lcov:file'), (err, data) => {
   const requestOptions = {
     uri: 'https://api.logface.io/v1/events',
     auth: {
-      user: get(config, 'nova:clientId'),
-      pass: get(config, 'nova:clientSecret'),
+      user: get(config, 'nova.clientId'),
+      pass: get(config, 'nova.clientSecret'),
     },
     json: [eventValuesStrings],
   };
