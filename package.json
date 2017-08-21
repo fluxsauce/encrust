@@ -1,0 +1,59 @@
+{
+  "name": "encrust",
+  "version": "1.0.0",
+  "description": "Send LCOV code coverage and ESLint warnings and errors from CI builds to splunk project nova.",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava",
+    "lint": "eslint -f json . > coverage/eslint.json"
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text",
+      "html"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fluxsauce/encrust.git"
+  },
+  "keywords": [
+    "istanbul",
+    "nyc",
+    "lcov",
+    "eslint",
+    "lint",
+    "coverage"
+  ],
+  "author": "Jon Peck <jpeck@fluxsauce.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/fluxsauce/encrust/issues"
+  },
+  "homepage": "https://github.com/fluxsauce/encrust#readme",
+  "bin": {
+    "encrust": "./bin/encrust.js"
+  },
+  "dependencies": {
+    "command-line-args": "4.0.x",
+    "command-line-usage": "4.0.x",
+    "joi": "10.6.x",
+    "lcov-parse": "1.0.x",
+    "lodash": "4.17.x",
+    "nconf": "0.8.x",
+    "request": "2.81.x",
+    "winston": "2.3.x"
+  },
+  "devDependencies": {
+    "ava": "0.22.x",
+    "eslint": "4.x.x",
+    "eslint-config-airbnb-base": "11.x.x",
+    "eslint-plugin-import": "2.x.x",
+    "eslint-plugin-lodash": "^2.4.4",
+    "nyc": "11.x.x"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}
