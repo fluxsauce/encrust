@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
-const identity = require('lodash/identity');
 const isError = require('lodash/isError');
 const merge = require('lodash/merge');
 const nconf = require('nconf');
 const omit = require('lodash/omit');
 const parse = require('lcov-parse');
-const pick = require('lodash/pick');
 const request = require('request');
 const winston = require('winston');
 const has = require('lodash/has');
@@ -77,7 +75,14 @@ merge(event, counts);
 parse(get(config, 'lcov.file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
-  const { error, value } = schemaEvent.validate(pick(event, identity), {
+  // Cleanup.
+  if (has(event, 'pullRequest') && !get(event, 'pullRequest')) {
+    delete event.pullRequest;
+    delete event.pullRequestSha;
+    delete event.pullRequestBranch;
+  }
+
+  const { error, value } = schemaEvent.validate(event, {
     abortEarly: false,
     stripUnknown: true,
   });
