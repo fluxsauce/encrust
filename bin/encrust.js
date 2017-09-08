@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
-const forEach = require('lodash/forEach');
+const identity = require('lodash/identity');
 const isError = require('lodash/isError');
-const keys = require('lodash/keys');
 const merge = require('lodash/merge');
 const nconf = require('nconf');
 const omit = require('lodash/omit');
 const parse = require('lcov-parse');
+const pick = require('lodash/pick');
 const request = require('request');
 const winston = require('winston');
 const has = require('lodash/has');
@@ -77,23 +77,15 @@ merge(event, counts);
 parse(get(config, 'lcov.file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
-  const eventValidation = schemaEvent.validate(event, {
+  const { error, value } = schemaEvent.validate(pick(event, identity), {
     abortEarly: false,
     stripUnknown: true,
   });
 
-  logger.debug(eventValidation);
-
-  if (isError(eventValidation.error)) {
-    logger.error(eventValidation.error.message);
+  if (isError(error)) {
+    logger.error(error.message);
     process.exit(1);
   }
-
-  // Workaround until Nova API supports JSON.
-  const eventValuesStrings = {};
-  forEach(keys(eventValidation.value), (key) => {
-    eventValuesStrings[key] = eventValidation.value[key].toString();
-  });
 
   const requestOptions = {
     uri: 'https://api.splunknova.com/v1/events',
@@ -101,18 +93,18 @@ parse(get(config, 'lcov.file'), (err, data) => {
       user: get(config, 'nova.clientId'),
       pass: get(config, 'nova.clientSecret'),
     },
-    json: [eventValuesStrings],
+    json: [value],
   };
 
-  request.post(requestOptions, (error, response, body) => {
-    if (error) {
-      logger.log('error', error);
+  request.post(requestOptions, (postError, response, body) => {
+    if (postError) {
+      logger.log('error', postError);
     }
 
     if (response.statusCode === 200) {
       logger.info(body);
     } else {
-      logger.log('info', eventValuesStrings);
+      logger.log('info', value);
       logger.log('error', 'statusCode: %s', response.statusCode);
       logger.log('error', body);
     }
