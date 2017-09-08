@@ -96,7 +96,7 @@ parse(get(config, 'lcov.file'), (err, data) => {
   });
 
   const requestOptions = {
-    uri: 'https://api.logface.io/v1/events',
+    uri: 'https://api.splunknova.com/v1/events',
     auth: {
       user: get(config, 'nova.clientId'),
       pass: get(config, 'nova.clientSecret'),
