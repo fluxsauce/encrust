@@ -38,6 +38,19 @@ test('schemaEvent.validate', (t) => {
       repoSlug: 'fluxsauce/encrust',
       language: 'node',
     },
+    {
+      coveragePercentageLines: 100,
+      coveragePercentageFunctions: 99,
+      coveragePercentageBranches: 88,
+      jobNumber: 1,
+      languageVersion: '1.2.3',
+      buildId: 123,
+      buildNumber: 456,
+      commit: '0b9a30dca07c78d9e8582cffa27240c563ba6d26',
+      testResult: 1,
+      repoSlug: 'fluxsauce/encrust',
+      language: 'node',
+    },
   ];
 
   forEach(validInput, (valid) => {

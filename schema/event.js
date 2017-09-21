@@ -9,8 +9,8 @@ const sha = require('../constraints/sha');
 const testResult = require('../constraints/testResult');
 
 module.exports = Joi.object().keys({
-  eslintCountWarning: countWarning.required().label('ESLint warning count'),
-  eslintCountError: countError.required().label('ESLint error count'),
+  eslintCountWarning: countWarning.default(0).label('ESLint warning count'),
+  eslintCountError: countError.default(0).label('ESLint error count'),
   coveragePercentageLines: percentage.required().label('Code coverage lines percentage'),
   coveragePercentageFunctions: percentage.required().label('Code coverage functions percentage'),
   coveragePercentageBranches: percentage.required().label('Code coverage branches percentage'),
