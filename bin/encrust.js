@@ -10,6 +10,8 @@ const request = require('request');
 const winston = require('winston');
 const has = require('lodash/has');
 const get = require('lodash/get');
+const identity = require('lodash/identity');
+const pickBy = require('lodash/pickBy');
 
 const envTravisCi = require('../lib/env/travisCi');
 const help = require('../lib/help');
@@ -75,7 +77,7 @@ merge(event, counts);
 parse(get(config, 'lcov.file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
-  const { error, value } = schemaEvent.validate(event, {
+  const { error, value } = schemaEvent.validate(pickBy(event, identity), {
     abortEarly: false,
     stripUnknown: true,
   });
