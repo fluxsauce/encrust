@@ -89,6 +89,10 @@ parse(get(config, 'lcov.file'), (err, data) => {
     process.exit(1);
   }
 
+  // Adjusting payload.
+  value.source = 'encrust';
+  value.entity = value.repoSlug;
+
   const requestOptions = {
     uri: 'https://api.splunknova.com/v1/events',
     auth: {
