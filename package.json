@@ -47,11 +47,11 @@
   },
   "devDependencies": {
     "ava": "0.22.x",
-    "eslint": "4.x.x",
-    "eslint-config-airbnb-base": "11.x.x",
-    "eslint-plugin-import": "2.x.x",
-    "eslint-plugin-lodash": "^2.4.4",
-    "nyc": "11.x.x"
+    "eslint": "4.x",
+    "eslint-config-airbnb-base": "11.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-lodash": "2.x",
+    "nyc": "11.x"
   },
   "engines": {
     "node": ">=6"

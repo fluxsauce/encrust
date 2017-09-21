@@ -75,13 +75,6 @@ merge(event, counts);
 parse(get(config, 'lcov.file'), (err, data) => {
   merge(event, util.parseLcov(data));
 
-  // Cleanup.
-  if (has(event, 'pullRequest') && !get(event, 'pullRequest')) {
-    delete event.pullRequest;
-    delete event.pullRequestSha;
-    delete event.pullRequestBranch;
-  }
-
   const { error, value } = schemaEvent.validate(event, {
     abortEarly: false,
     stripUnknown: true,
@@ -89,6 +82,7 @@ parse(get(config, 'lcov.file'), (err, data) => {
 
   if (isError(error)) {
     logger.error(error.message);
+    logger.debug(value);
     process.exit(1);
   }
 
