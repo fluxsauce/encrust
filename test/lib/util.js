@@ -1,5 +1,5 @@
 const test = require('ava');
-const util = require('../lib/util');
+const util = require('../../lib/util');
 
 test('parseEslint', (t) => {
   const input = {
@@ -20,3 +20,4 @@ test('parseEslint', (t) => {
 
   t.deepEqual(util.parseEslint(input), expected);
 });
+

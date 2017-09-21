@@ -4,7 +4,7 @@
   "description": "Send LCOV code coverage and ESLint warnings and errors from CI builds to splunk project nova.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc ava",
+    "test": "nyc ava -v",
     "lint": "eslint -f json . > coverage/eslint.json"
   },
   "nyc": {
@@ -38,7 +38,7 @@
   "dependencies": {
     "command-line-args": "4.0.x",
     "command-line-usage": "4.0.x",
-    "joi": "10.6.x",
+    "joi": "11.0.x",
     "lcov-parse": "1.0.x",
     "lodash": "4.17.x",
     "nconf": "0.8.x",
